@@ -29,7 +29,7 @@ export class NovuRestClient {
       },
       body: JSON.stringify({
         name: eventName,
-        triggerPayloadOpts,
+        ...triggerPayloadOpts,
       }),
     });
   }
