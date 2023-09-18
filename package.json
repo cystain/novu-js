@@ -1,0 +1,22 @@
+{
+  "name": "@cystain/novu-rest-js",
+  "version": "1.0.0",
+  "description": "JS Rest client for Novu that utilizes fetch for wider platform compatibility",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@novu/node": "^0.19.0",
+    "prettier": "^3.0.1"
+  },
+  "prettier": {
+    "useTabs": false,
+    "tabWidth": 2,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "printWidth": 100
+  }
+}

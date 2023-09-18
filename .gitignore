@@ -1,0 +1,8 @@
+node_modules/
+
+#IDE
+*.iml
+.idea
+.vscode
+
+.env
