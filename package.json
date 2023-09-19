@@ -1,10 +1,12 @@
 {
   "name": "@cystain/novu-rest-js",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "JS Rest client for Novu that utilizes fetch for wider compatibility",
   "main": "index.js",
+  "dependencies": {
+    "@novu/node": "^0.19.0"
+  },
   "devDependencies": {
-    "@novu/node": "^0.19.0",
     "prettier": "^3.0.1"
   },
   "scripts": {
