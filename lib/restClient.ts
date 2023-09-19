@@ -1,4 +1,4 @@
-import { ITriggerPayloadOptions, ISubscriberPayload } from '@novu/node';
+import type { ITriggerPayloadOptions, ISubscriberPayload } from '@novu/node';
 
 /**
  * The Novu Rest API Client

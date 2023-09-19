@@ -2,9 +2,11 @@
 
 A third-party library for invoking the REST APIs of Novu
 
+(_still a work-in-progress_)
+
 ### Motivation
 
-This aims to provide wider compatibility to other non-node JS runtime.
+This is an open-source project that aims to provide wider compatibility to other non-node JS runtime.
 
 #### Use case(s)
 
