@@ -1,14 +1,22 @@
 {
   "name": "@cystain/novu-rest-js",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "description": "JS Rest client for Novu that utilizes fetch for wider compatibility",
   "scripts": {
     "build": "tsc && vite build",
-    "publish": "npm run build && npm publish --access=public",
+    "prepublishOnly": "npm run build",
+    "watch": "npx nodemon -w src -e ts -x 'npm run build || exit 1'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@novu/node": "^0.19.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.1",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.9",
+    "vite-plugin-dts": "^3.5.4"
   },
   "exports": {
     "./restClient": "./dist/restClient.cjs"
@@ -19,12 +27,6 @@
         "dist/*.d.ts"
       ]
     }
-  },
-  "devDependencies": {
-    "prettier": "^3.0.1",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.9",
-    "vite-plugin-dts": "^3.5.4"
   },
   "files": [
     "dist"

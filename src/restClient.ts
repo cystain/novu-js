@@ -58,5 +58,22 @@ export class NovuRestClient {
         }),
       });
     },
+    /**
+     * Updates an existing subscriber.
+     * (REST API doc: https://docs.novu.co/api-reference/subscribers/update-subscriber)
+     * @param subscriberId
+     * @param subscriberPayloadOpts
+     * @returns
+     */
+    update: async (subscriberId: string, subscriberPayloadOpts: ISubscriberPayload) => {
+      return fetch(`${this.API_BASE_URL}/subscribers/${subscriberId}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `ApiKey ${this.API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(subscriberPayloadOpts),
+      });
+    },
   };
 }
