@@ -1,4 +1,5 @@
 import type { ITriggerPayloadOptions, ISubscriberPayload } from '@novu/node';
+import { IChannelCredentials } from '@novu/shared';
 
 /**
  * The Novu Rest API Client
@@ -8,6 +9,7 @@ export class NovuRestClient {
   private API_BASE_URL: string = 'https://api.novu.co/v1';
 
   /**
+   * Contructor for the Novu Rest API Client
    * @param apiKey the API Key of the Novu account
    */
   constructor(apiKey: string | undefined) {
@@ -38,6 +40,22 @@ export class NovuRestClient {
   }
 
   subscribers = {
+    /**
+     * Retrieves a subscriber's details.
+     * (REST API doc: https://docs.novu.co/api-reference/subscribers/get-subscribers)
+     * @param subscriberId
+     * @param subscriberPayloadOpts
+     * @returns
+     */
+    get: async (subscriberId: string) => {
+      return fetch(`${this.API_BASE_URL}/subscribers/${subscriberId}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `ApiKey ${this.API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      });
+    },
     /**
      * Creates a new subscriber. This has an upsert behavior, only updating attributes that are present in the request.
      * (REST API doc: https://docs.novu.co/api-reference/subscribers/create-subscriber)
@@ -75,5 +93,93 @@ export class NovuRestClient {
         body: JSON.stringify(subscriberPayloadOpts),
       });
     },
+    /**
+     * Updates the credentials of a subscriber
+     * (REST API doc: https://docs.novu.co/api-reference/subscribers/update-subscriber-credentials)
+     * @param subscriberId
+     * @param providerId
+     * @param credentials
+     * @returns
+     */
+    setCredentials: async (
+      subscriberId: string,
+      providerId: ChatPushProviderId,
+      credentials: IChannelCredentials
+    ) => {
+      return fetch(`${this.API_BASE_URL}/subscribers/${subscriberId}/credentials`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `ApiKey ${this.API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          credentials,
+          providerId,
+        }),
+      });
+    },
+
+    /**
+     * Delete deviceToken(s) from a subscriber's credential.
+     * (REST API doc: https://docs.novu.co/api-reference/subscribers/update-subscriber-credentials)
+     * @param subscriberId
+     * @param providerId
+     * @param deviceTokens the deviceToken(s) to delete
+     * @returns Promise that resolves with the fetch response. true if no errors and no change were done
+     */
+    deleteDeviceTokens: async (
+      subscriberId: string,
+      providerId: ChatPushProviderId,
+      deviceTokensToDelete: Array<string>
+    ) => {
+      // Retrieve the current array of tokens of the subscriber
+      const getResp = await this.subscribers.get(subscriberId);
+      if (!getResp.ok) {
+        throw new Error('[subscribers.deleteDeviceToken] Failed to retrieve subscriber data');
+      }
+      const subData = (await getResp.json()).data;
+      // Check if the subscriber had the deviceTokens
+      const channel = subData.channels?.find((c: any) => c.providerId === providerId);
+      const currDeviceTokens = channel?.credentials?.deviceTokens;
+      if (currDeviceTokens?.length > 0) {
+        // Remove the deviceTokens from the current array
+        const updatedDeviceTokens = currDeviceTokens.filter(
+          (dt: string) => !deviceTokensToDelete.includes(dt)
+        );
+
+        // Check if there is a change in the array
+        if (updatedDeviceTokens.length !== currDeviceTokens.length) {
+          // Clear the deviceTokens first, then set the updated array (Ref to approach: https://discord.com/channels/895029566685462578/1151537644463980655/1152302182369075341)
+          return this.subscribers
+            .setCredentials(subscriberId, providerId, {
+              deviceTokens: [],
+            })
+            .then(() =>
+              this.subscribers.setCredentials(subscriberId, providerId, {
+                deviceTokens: updatedDeviceTokens,
+              })
+            );
+        } else {
+          console.debug("deviceToken(s) doesn't exist");
+        }
+      }
+
+      console.debug(
+        "[subscribers.deleteDeviceToken] deviceToken(s) don't exist. No change applied."
+      );
+      return true;
+    },
   };
 }
+
+// Based from `ChatProviderIdEnum` and `PushProviderIdEnum`
+type ChatPushProviderId =
+  | 'fcm'
+  | 'apns'
+  | 'expo'
+  | 'one-signal'
+  | 'push-webhook'
+  | 'slack'
+  | 'discord'
+  | 'msteams'
+  | 'mattermost';

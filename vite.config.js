@@ -9,7 +9,7 @@ export default defineConfig({
       entry: {
         restClient: resolve(__dirname, 'src/restClient.ts'),
       },
-      formats: ['cjs'],
+      formats: ['es'],
       name: 'NovuRestJS',
       fileName: (format, name) => {
         if (format === 'es') {
