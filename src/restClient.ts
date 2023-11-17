@@ -77,6 +77,21 @@ export class NovuRestClient {
       });
     },
     /**
+     * Deletes a subscriber.
+     * (REST API doc: https://docs.novu.co/api-reference/subscribers/delete-subscriber)
+     * @param subscriberId
+     * @returns
+     */
+    delete: async (subscriberId: string) => {
+      return fetch(`${this.API_BASE_URL}/subscribers/${subscriberId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `ApiKey ${this.API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+    /**
      * Updates an existing subscriber.
      * (REST API doc: https://docs.novu.co/api-reference/subscribers/update-subscriber)
      * @param subscriberId
