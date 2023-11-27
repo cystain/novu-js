@@ -1,6 +1,6 @@
 {
   "name": "@cystain/novu-rest-js",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "JS Rest client for Novu that utilizes fetch for wider compatibility",
   "type": "module",
   "scripts": {

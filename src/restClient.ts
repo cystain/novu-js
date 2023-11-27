@@ -174,14 +174,39 @@ export class NovuRestClient {
                 deviceTokens: updatedDeviceTokens,
               })
             );
-        } else {
-          console.debug("deviceToken(s) doesn't exist");
         }
       }
+      return true;
+    },
 
-      console.debug(
-        "[subscribers.deleteDeviceToken] deviceToken(s) don't exist. No change applied."
-      );
+    /**
+     * Replace existing deviceTokens of subscribers with new token(s)
+     * (REST API doc: https://docs.novu.co/api-reference/subscribers/update-subscriber-credentials)
+     * @param subscriberIds
+     * @param providerId
+     * @param oldDeviceTokens the old deviceToken(s) to delete
+     * @param newDeviceTokens the new deviceToken(s) to add
+     * @returns Promise that resolves with the fetch response. true if no errors and no change were done
+     */
+    replaceDeviceTokens: async (
+      subscriberIds: Array<string>,
+      providerId: ChatPushProviderId,
+      oldDeviceTokens: Array<string>,
+      newDeviceTokens: Array<string>
+    ) => {
+      const promises: Array<Promise<any>> = [];
+      for (const subscriberId of subscriberIds) {
+        promises.push(
+          // delete the old token(s)
+          this.subscribers.deleteDeviceTokens(subscriberId, providerId, oldDeviceTokens).then(() =>
+            // add the new token(s)
+            this.subscribers.setCredentials(subscriberId, providerId, {
+              deviceTokens: newDeviceTokens,
+            })
+          )
+        );
+      }
+      await Promise.allSettled(promises);
       return true;
     },
   };
