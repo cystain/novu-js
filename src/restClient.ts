@@ -150,7 +150,7 @@ export class NovuRestClient {
       // Retrieve the current array of tokens of the subscriber
       const getResp = await this.subscribers.get(subscriberId);
       if (!getResp.ok) {
-        throw new Error('[subscribers.deleteDeviceToken] Failed to retrieve subscriber data');
+        return getResp;
       }
       const subData = (await getResp.json()).data;
       // Check if the subscriber had the deviceTokens
@@ -206,7 +206,7 @@ export class NovuRestClient {
           )
         );
       }
-      await Promise.allSettled(promises);
+      await Promise.all(promises);
       return true;
     },
   };
